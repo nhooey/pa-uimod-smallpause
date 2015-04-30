@@ -1,17 +1,21 @@
 .div_panel_bar_background {
-    width: 100%;
-    position: relative;
+    width: 260px;
+    margin: 20px 0 0 -130px;
+    position: absolute;
+    top: 20px;
+    left 50%;
     box-shadow: 0px 0px 100px #000;
     text-align: center;
     background-color: rgba(0,0,0,.5);
 }
 
 .div_panel_primary_msg {
-    height: 56px;
+    height: 30px;
+    line-height: 15px;
     width: 100%;
     background: url(coui://ui/main/game/game_over/img/bground_summary.png) center center no-repeat rgba(0,0,0,.7);
     font-family: 'Sansation Bold';
-    font-size: 40px;
+    font-size: 20px;
     color: #fff;
     border: 1px solid rgba(255,255,255,.15);
     border-width: 1px 0px;
@@ -27,17 +31,17 @@
     flex-direction:row;
     align-content: center;
     justify-content: center;
-    padding: 10px 0px;
+    padding: 0px 0px;
 }
 
 input[type="button"] {
     font-size: 18px;
-    padding: 12px 36px;
+    padding: 4px 36px;
     box-shadow: 0px 0px 20px #000;
 }
 
 .div_bottom_margin_bar {
-    height: 20px;
+    height: 5px;
     width: 100%;
     background: rgba(0,0,0,.3);
 }
