@@ -4,7 +4,7 @@
      "display_name": "Small Pause Dialogue",
      "description": "Makes modding easier with a small pause button that doesn't get in the way.",
      "author": "coldboot",
-     "version": "1.0.0",
+     "version": "1.0.1",
      "signature": "not yet implemented",
      "priority": 10,
      "enabled": true,
