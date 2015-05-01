@@ -15,8 +15,8 @@
           "ui"
      ],
      "scenes": {
-          "live_game": [
-                "coui://ui/main/game/live_game/live_game_paused_popup.css"
+          "live_game_paused_popup": [
+                "coui://ui/mods/smallpause/smallpause.js"
           ]
      },
      "date": "2015/04/30",
