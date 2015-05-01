@@ -18,7 +18,7 @@
      "icon": "https://raw.githubusercontent.com/nhooey/pa-uimod-smallpause/master/icon.png",
      "scenes": {
           "live_game": [
-                "coui://ui/main/game/live_game/live_game_paused_popup.css"
+                "coui://ui/mods/smallpause/smallpause.js"
           ]
      },
      "date": "2015/04/30",
