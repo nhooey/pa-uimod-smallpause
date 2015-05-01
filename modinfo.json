@@ -2,21 +2,22 @@
      "context": "client",
      "identifier": "com.pa.coldboot.smallpause",
      "display_name": "Small Pause Dialogue",
-     "description": "Makes the Game Pause dialogue small so it isn't in the way of selecting units.",
+     "description": "Makes modding easier with a small pause button that doesn't get in the way.",
      "author": "coldboot",
      "version": "1.0.0",
      "signature": "not yet implemented",
      "priority": 10,
      "enabled": true,
-     "id": "smallPause",
-     "forum": "http://TODO",
+     "id": "smallpause",
+     "forum": "https://forums.uberent.com/threads/rel-client-small-pause-dialogue.68689/",
      "category": [
           "in-game",
+          "modding",
           "ui"
      ],
      "scenes": {
-          "live_game_paused_popup": [
-                "coui://ui/mods/smallpause/smallpause.js"
+          "live_game": [
+                "coui://ui/main/game/live_game/live_game_paused_popup.css"
           ]
      },
      "date": "2015/04/30",
