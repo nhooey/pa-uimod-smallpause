@@ -1,26 +1,26 @@
 {
-     "context": "client",
-     "identifier": "com.pa.coldboot.smallpause",
-     "display_name": "Small Pause Dialogue",
-     "description": "Makes modding easier with a small pause button that doesn't get in the way.",
-     "author": "coldboot",
-     "version": "1.0.3",
-     "signature": "not yet implemented",
-     "priority": 10,
-     "enabled": true,
-     "id": "smallpause",
-     "forum": "https://forums.uberent.com/threads/rel-client-small-pause-dialogue.68689/",
-     "category": [
-          "in-game",
-          "modding",
-          "ui"
-     ],
-     "icon": "https://raw.githubusercontent.com/nhooey/pa-uimod-smallpause/master/icon.png",
-     "scenes": {
-          "live_game_paused_popup": [
-                "coui://ui/mods/smallpause/smallpause.js"
-          ]
-     },
-     "date": "2015/04/30",
-     "build": "80462"
+    "context": "client",
+    "identifier": "com.pa.coldboot.smallpause",
+    "display_name": "Small Pause Dialogue",
+    "description": "Makes modding easier with a small pause button that doesn't get in the way.",
+    "author": "coldboot",
+    "version": "1.0.3",
+    "signature": "not yet implemented",
+    "priority": 10,
+    "enabled": true,
+    "id": "smallpause",
+    "forum": "https://forums.uberent.com/threads/rel-client-small-pause-dialogue.68689/",
+    "category": [
+        "in-game",
+        "modding",
+        "ui"
+    ],
+    "icon": "https://raw.githubusercontent.com/nhooey/pa-uimod-smallpause/master/icon.png",
+    "scenes": {
+        "live_game_paused_popup": [
+            "coui://ui/mods/smallpause/smallpause.js"
+        ]
+    },
+    "date": "2015/04/30",
+    "build": "80462"
 }
