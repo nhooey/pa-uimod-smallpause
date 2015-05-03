@@ -1,5 +1,3 @@
-console.log("Setting styles for \"Small Pause\" mod...");
-
 $('.div_panel_bar_background').css({
     'width': '260px',
     'margin': '20px 0 0 -130px',
