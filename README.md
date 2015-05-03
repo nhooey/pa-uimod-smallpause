@@ -5,10 +5,10 @@ A Planetary Annihilation UI Mod
 This is a modification for the popular real-time strategy game: Planetary Annihilation. It makes the pause dialogue and button much smaller so it doesn't get in the way of the rest of the interface while the game is paused. This is useful for modders who want to test their UI while the game is paused.
 
 #### Before: ####
-![Default Pause Screenshot](default_pause_screenshot.png)
+![Default Pause Screenshot](img/default_pause_screenshot.png)
 
 #### After: ####
-![Small Pause Screenshot](small_pause_screenshot.png)
+![Small Pause Screenshot](img/small_pause_screenshot.png)
 
 ## Installation ##
 If you just want to use the mod, don't bother downloading the code from GitHub. Follow these steps:

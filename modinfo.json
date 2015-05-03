@@ -15,7 +15,7 @@
         "modding",
         "ui"
     ],
-    "icon": "https://raw.githubusercontent.com/nhooey/pa-uimod-smallpause/master/icon.png",
+    "icon": "https://raw.githubusercontent.com/nhooey/pa-uimod-smallpause/master/img/icon.png",
     "scenes": {
         "live_game_paused_popup": [
             "coui://ui/mods/smallpause/smallpause.js"
