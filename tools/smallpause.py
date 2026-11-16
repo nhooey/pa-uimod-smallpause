@@ -192,15 +192,35 @@ class Plan:
     refusal: str | None
 
 
+def holds_checkout(destination: Path, root: Path) -> bool:
+    """True when `destination` is the checkout `root` or a directory above it.
+
+    Both paths must already be resolved. A clone made in client_mods under the
+    mod's identifier carries the same modinfo.json, so without this check
+    `install` and `uninstall` would delete the checkout itself.
+    """
+    return destination == root or destination in root.parents
+
+
+def checkout_refusal(destination: Path, root: Path) -> str:
+    return f"{destination} is the checkout at {root} itself; leaving it alone"
+
+
 def install_plan(
-    destination: Path, existing_identifier: str | None, identifier: str, exists: bool
+    destination: Path,
+    existing_identifier: str | None,
+    identifier: str,
+    exists: bool,
+    root: Path,
 ) -> Plan:
-    """Replace a copy only when it is this mod's: never overwrite another mod's directory."""
+    """Replace a copy only when it is this mod's: never overwrite another mod's directory or the checkout."""
     return Plan(
         destination=destination,
         replaces=exists,
         refusal=(
-            None
+            checkout_refusal(destination, root)
+            if holds_checkout(destination, root)
+            else None
             if not exists or existing_identifier == identifier
             else f"{destination} exists and is not a copy of {identifier}; move it aside first"
         ),
@@ -208,7 +228,11 @@ def install_plan(
 
 
 def uninstall_plan(
-    destination: Path, existing_identifier: str | None, identifier: str, exists: bool
+    destination: Path,
+    existing_identifier: str | None,
+    identifier: str,
+    exists: bool,
+    root: Path,
 ) -> Plan:
     return Plan(
         destination=destination,
@@ -216,6 +240,8 @@ def uninstall_plan(
         refusal=(
             f"{destination} does not exist; nothing to remove"
             if not exists
+            else checkout_refusal(destination, root)
+            if holds_checkout(destination, root)
             else None
             if existing_identifier == identifier
             else f"{destination} is not a copy of {identifier}; leaving it alone"
@@ -330,7 +356,11 @@ def run_install(root: Path, client_mods: Path | None, dry_run: bool) -> int:
         return 1
     destination = client_mods / identifier
     plan = install_plan(
-        destination, identifier_at(destination), identifier, destination.exists()
+        destination.resolve(),
+        identifier_at(destination),
+        identifier,
+        destination.exists(),
+        root.resolve(),
     )
     if plan.refusal:
         print(f"error: {plan.refusal}", file=sys.stderr)
@@ -363,7 +393,11 @@ def run_uninstall(root: Path, client_mods: Path | None, dry_run: bool) -> int:
         return 1
     destination = client_mods / identifier
     plan = uninstall_plan(
-        destination, identifier_at(destination), identifier, destination.exists()
+        destination.resolve(),
+        identifier_at(destination),
+        identifier,
+        destination.exists(),
+        root.resolve(),
     )
     if plan.refusal:
         print(f"error: {plan.refusal}", file=sys.stderr)
