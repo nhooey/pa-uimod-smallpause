@@ -1,0 +1,13 @@
+# Nix build outputs, and the dev shell's state.
+/result
+/result-*
+/.direnv/
+
+# Project-scope skill installs from `nix develop`'s startup hooks; the
+# skills' preferences files beside them are the project's own.
+/.agents/skills/*
+!/.agents/skills/*.preferences.md
+/.claude/skills/
+
+# Bytecode from running tools/smallpause.py and its tests.
+__pycache__/
