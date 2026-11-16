@@ -15,14 +15,32 @@
       url = "github:nhooey/agent-skill-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     { flake-parts, systems, ... }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import systems;
-      imports = [ inputs.agent-skill-flake.flakeModules.devshellSkills ];
+      imports = [
+        inputs.agent-skill-flake.flakeModules.devshellSkills
+        inputs.treefmt-nix.flakeModule
+      ];
 
       agent-skill-flake.devshellSkills.name = "pa-uimod-smallpause";
+
+      # treefmt-nix also adds `checks.<system>.treefmt`, so `nix flake check`
+      # fails on any unformatted file.
+      perSystem.treefmt = {
+        projectRootFile = "flake.nix";
+        programs.nixfmt.enable = true;
+        settings.global.excludes = [
+          ".agents/**" # installed third-party skills, not ours to reformat
+          ".claude/**"
+        ];
+      };
     };
 }
