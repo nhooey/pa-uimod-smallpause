@@ -24,7 +24,8 @@ If you would like contribute, send a pull request. Just don't send me tabs. I ha
 
 To get the mod working from the source code, follow these steps:
 - Clone the github repository somewhere
-- Run `nix develop` in the clone, then `smallpause install` to copy the mod into the game's `client_mods` directory (`smallpause install --help` lists its options)
+- Run `nix develop` in the clone, then `smallpause install` to copy the mod into the game's `client_mods` directory (`smallpause install --help` lists its options):
+  * Mac OS: `~/Library/Application Support/Uber Entertainment/Planetary Annihilation/client_mods/`
 - Run PAMM
 - Click on the "UI Mods" section
 - Find the "Small Pause Dialogue" and click it to activate it
