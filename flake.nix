@@ -34,20 +34,49 @@
 
       perSystem =
         { pkgs, ... }:
+        let
+          # tools/smallpause.py is standard-library Python; the package only
+          # puts it on PATH under the nixpkgs interpreter.
+          smallpause = pkgs.writeShellApplication {
+            name = "smallpause";
+            runtimeInputs = [ pkgs.python3 ];
+            text = ''exec python3 ${./tools/smallpause.py} "$@"'';
+          };
+        in
         {
-          # The game loads the mod from modinfo.json alone, so a broken
-          # manifest or scene path fails silently in-game;
-          # tests/check-modinfo.sh catches both without the game.
-          checks.modinfo =
-            pkgs.runCommand "modinfo-check"
+          packages.default = smallpause;
+          packages.smallpause = smallpause;
+
+          devshells.default = {
+            packages = [ pkgs.python3 ];
+            commands = [
               {
-                nativeBuildInputs = [
-                  pkgs.bash
-                  pkgs.jq
-                ];
+                category = "dev";
+                package = smallpause;
+                help = "Check modinfo.json, or install the mod into the game's client_mods to try it (smallpause --help)";
               }
+              {
+                category = "ci";
+                name = "unit-test";
+                help = "Run smallpause's unit tests";
+                command = ''python3 -m unittest discover -s "$(git rev-parse --show-toplevel 2>/dev/null || echo "$PRJ_ROOT")/tests" "$@"'';
+              }
+            ];
+          };
+
+          # The game loads the mod from modinfo.json alone, so a broken
+          # manifest or scene path fails silently in-game; `smallpause
+          # check-modinfo` catches both without the game.
+          checks.modinfo = pkgs.runCommand "modinfo-check" { } ''
+            ${pkgs.lib.getExe smallpause} --root ${./.} check-modinfo
+            touch $out
+          '';
+
+          checks.unit-tests =
+            pkgs.runCommand "smallpause-unit-tests" { nativeBuildInputs = [ pkgs.python3 ]; }
               ''
-                bash ${./tests/check-modinfo.sh} ${./.}
+                cp -r ${./.} src && chmod -R u+w src && cd src
+                python3 -m unittest discover -s tests -v
                 touch $out
               '';
 
@@ -56,6 +85,7 @@
           treefmt = {
             projectRootFile = "flake.nix";
             programs.nixfmt.enable = true;
+            programs.ruff-format.enable = true;
             settings.global.excludes = [
               ".agents/**" # installed third-party skills, not ours to reformat
               ".claude/**"

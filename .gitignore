@@ -8,3 +8,6 @@
 /.agents/skills/*
 !/.agents/skills/*.preferences.md
 /.claude/skills/
+
+# Bytecode from running tools/smallpause.py and its tests.
+__pycache__/
