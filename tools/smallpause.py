@@ -126,8 +126,16 @@ def scene_problems(
             else f"scene script {url} has no file at {path}"
         )
 
-    return (() if scripts else (f"{MANIFEST} scenes lists no scripts",)) + tuple(
-        p for p in map(problem, scripts) if p is not None
+    scenes = manifest.get("scenes")
+    not_lists = tuple(
+        f"{MANIFEST} scene {name} is not a list of scripts"
+        for name, urls in (scenes.items() if isinstance(scenes, dict) else ())
+        if not isinstance(urls, list)
+    )
+    return (
+        (() if scripts else (f"{MANIFEST} scenes lists no scripts",))
+        + not_lists
+        + tuple(p for p in map(problem, scripts) if p is not None)
     )
 
 

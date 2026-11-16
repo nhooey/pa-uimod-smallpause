@@ -80,6 +80,15 @@ class ManifestProblems(unittest.TestCase):
             sp.manifest_problems(GOOD | {"scenes": {"s": []}}, exists),
         )
 
+    def test_scene_must_be_a_list(self):
+        # The game reads each scene as a list of URLs; a bare string is
+        # not loaded, even beside a sound scene.
+        scenes = GOOD["scenes"] | {"other": "coui://ui/mods/example/example.js"}
+        self.assertEqual(
+            sp.manifest_problems(GOOD | {"scenes": scenes}, exists),
+            ("modinfo.json scene other is not a list of scripts",),
+        )
+
     def test_icon_checks(self):
         self.assertEqual(
             sp.manifest_problems(
