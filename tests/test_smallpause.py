@@ -1,4 +1,5 @@
-"""Tests for tools/smallpause.py's argument parsing and pure core.
+"""Tests for tools/smallpause.py's argument parsing and pure core, and for
+`install` and `uninstall` run against scratch client_mods directories.
 
 Run with `python3 -m unittest discover -s tests` from the repository root;
 `nix flake check` runs them too.
@@ -6,7 +7,9 @@ Run with `python3 -m unittest discover -s tests` from the repository root;
 
 import contextlib
 import io
+import shutil
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -142,37 +145,112 @@ class ClientMods(unittest.TestCase):
 
 class Plans(unittest.TestCase):
     dest = Path("/mods/com.example.mod")
+    root = Path("/src/smallpause")
 
     def test_install_fresh_and_replace(self):
         self.assertEqual(
-            sp.install_plan(self.dest, None, "com.example.mod", False),
+            sp.install_plan(self.dest, None, "com.example.mod", False, self.root),
             sp.Plan(self.dest, False, None),
         )
         self.assertEqual(
-            sp.install_plan(self.dest, "com.example.mod", "com.example.mod", True),
+            sp.install_plan(
+                self.dest, "com.example.mod", "com.example.mod", True, self.root
+            ),
             sp.Plan(self.dest, True, None),
         )
 
     def test_install_refuses_another_directory(self):
         self.assertIsNotNone(
-            sp.install_plan(self.dest, None, "com.example.mod", True).refusal
+            sp.install_plan(self.dest, None, "com.example.mod", True, self.root).refusal
         )
         self.assertIsNotNone(
-            sp.install_plan(self.dest, "other", "com.example.mod", True).refusal
+            sp.install_plan(
+                self.dest, "other", "com.example.mod", True, self.root
+            ).refusal
         )
 
     def test_uninstall(self):
         self.assertIsNone(
             sp.uninstall_plan(
-                self.dest, "com.example.mod", "com.example.mod", True
+                self.dest, "com.example.mod", "com.example.mod", True, self.root
             ).refusal
         )
         self.assertIsNotNone(
-            sp.uninstall_plan(self.dest, None, "com.example.mod", False).refusal
+            sp.uninstall_plan(
+                self.dest, None, "com.example.mod", False, self.root
+            ).refusal
         )
         self.assertIsNotNone(
-            sp.uninstall_plan(self.dest, "other", "com.example.mod", True).refusal
+            sp.uninstall_plan(
+                self.dest, "other", "com.example.mod", True, self.root
+            ).refusal
         )
+
+    def test_refuses_the_checkout_itself(self):
+        # A clone made in client_mods under the mod's identifier has the
+        # same modinfo.json as the copy install would replace.
+        for plan in (sp.install_plan, sp.uninstall_plan):
+            for root in (self.dest, self.dest / "nested"):
+                with self.subTest(plan=plan.__name__, root=root):
+                    self.assertEqual(
+                        plan(
+                            self.dest, "com.example.mod", "com.example.mod", True, root
+                        ).refusal,
+                        f"{self.dest} is the checkout at {root} itself; leaving it alone",
+                    )
+
+
+class InstallOverCheckout(unittest.TestCase):
+    """`install` and `uninstall` run against a clone that sits in client_mods."""
+
+    def test_checkout_survives(self):
+        source = Path(__file__).resolve().parent.parent
+        with tempfile.TemporaryDirectory() as scratch:
+            client_mods = Path(scratch)
+            checkout = client_mods / "com.pa.coldboot.smallpause"
+            checkout.mkdir()
+            shutil.copy2(source / "modinfo.json", checkout / "modinfo.json")
+            shutil.copytree(source / "ui", checkout / "ui")
+            (checkout / "keep").write_text("the clone's own file\n")
+            for command in ("install", "uninstall"):
+                with (
+                    self.subTest(command=command),
+                    contextlib.redirect_stderr(io.StringIO()) as stderr,
+                ):
+                    self.assertEqual(
+                        sp.main(
+                            [
+                                "--root",
+                                str(checkout),
+                                command,
+                                "--client-mods",
+                                str(client_mods),
+                            ]
+                        ),
+                        1,
+                    )
+                    self.assertIn("is the checkout at", stderr.getvalue())
+                    self.assertTrue((checkout / "keep").is_file())
+                    self.assertTrue((checkout / "modinfo.json").is_file())
+
+    def test_install_then_uninstall_a_copy(self):
+        source = Path(__file__).resolve().parent.parent
+        with tempfile.TemporaryDirectory() as scratch:
+            client_mods = Path(scratch)
+            destination = client_mods / "com.pa.coldboot.smallpause"
+            argv = ["--root", str(source)]
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(
+                    sp.main(argv + ["install", "--client-mods", str(client_mods)]), 0
+                )
+                self.assertTrue((destination / "modinfo.json").is_file())
+                self.assertTrue(
+                    (destination / "ui/mods/smallpause/smallpause.js").is_file()
+                )
+                self.assertEqual(
+                    sp.main(argv + ["uninstall", "--client-mods", str(client_mods)]), 0
+                )
+            self.assertFalse(destination.exists())
 
 
 class FindRoot(unittest.TestCase):
