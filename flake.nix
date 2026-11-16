@@ -32,15 +32,35 @@
 
       agent-skill-flake.devshellSkills.name = "pa-uimod-smallpause";
 
-      # treefmt-nix also adds `checks.<system>.treefmt`, so `nix flake check`
-      # fails on any unformatted file.
-      perSystem.treefmt = {
-        projectRootFile = "flake.nix";
-        programs.nixfmt.enable = true;
-        settings.global.excludes = [
-          ".agents/**" # installed third-party skills, not ours to reformat
-          ".claude/**"
-        ];
-      };
+      perSystem =
+        { pkgs, ... }:
+        {
+          # The game loads the mod from modinfo.json alone, so a broken
+          # manifest or scene path fails silently in-game;
+          # tests/check-modinfo.sh catches both without the game.
+          checks.modinfo =
+            pkgs.runCommand "modinfo-check"
+              {
+                nativeBuildInputs = [
+                  pkgs.bash
+                  pkgs.jq
+                ];
+              }
+              ''
+                bash ${./tests/check-modinfo.sh} ${./.}
+                touch $out
+              '';
+
+          # treefmt-nix also adds `checks.<system>.treefmt`, so `nix flake
+          # check` fails on any unformatted file.
+          treefmt = {
+            projectRootFile = "flake.nix";
+            programs.nixfmt.enable = true;
+            settings.global.excludes = [
+              ".agents/**" # installed third-party skills, not ours to reformat
+              ".claude/**"
+            ];
+          };
+        };
     };
 }

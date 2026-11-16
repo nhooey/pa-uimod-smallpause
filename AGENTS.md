@@ -15,13 +15,17 @@ rest of the interface while the game is paused.
 
 ## Building and testing
 
-There is no build step and no automated test. To try a change, copy the
-checkout into the game's `client_mods/` directory (on macOS,
+There is no build step. `nix flake check` runs `tests/check-modinfo.sh`,
+which checks that `modinfo.json` parses, has the fields the game reads, and
+that each `coui://` scene script and the icon exist in the repository; run the
+script directly with `jq` on your PATH. It can't check the restyle itself: to
+try a change, copy the checkout into the game's `client_mods/` directory (on
+macOS,
 `~/Library/Application Support/Uber Entertainment/Planetary Annihilation/client_mods/`),
 enable "Small Pause Dialogue" under PAMM's UI Mods, and pause a game.
 
 `nix develop` enters the dev shell, which installs the agent skills in
-`skills-devshell/`; `nix flake check` checks the flake.
+`skills-devshell/`.
 
 ## Style
 
