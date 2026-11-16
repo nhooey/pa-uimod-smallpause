@@ -24,7 +24,7 @@ If you would like contribute, send a pull request. Just don't send me tabs. I ha
 
 To get the mod working from the source code, follow these steps:
 - Clone the github repository somewhere
-- Copy the `com.pa.coldboot.smallpause` directory to this directory:
+- Copy the cloned directory (the one holding `modinfo.json`) into this directory:
   * Mac OS: `~/Library/Application Support/Uber Entertainment/Planetary Annihilation/client_mods/`
 - Run PAMM
 - Click on the "UI Mods" section
