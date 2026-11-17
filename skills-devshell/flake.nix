@@ -11,22 +11,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Skill sources. They follow `nixpkgs` but not `agent-skill-flake`, so
-    # each keeps its own compatible builder.
-    coding-agent-skills = {
-      url = "github:nhooey/coding-agent-skills";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    git-skills = {
-      url = "github:nhooey/git-skills";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    shell-skills = {
-      url = "github:nhooey/shell-skills";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    writing-skills = {
-      url = "github:nhooey/writing-skills";
+    # skillspkgs' per-family skill combinations. It follows `nixpkgs` but not
+    # `agent-skill-flake`, so it keeps its own compatible builder.
+    skillspkgs-combinations = {
+      url = "github:nhooey/skillspkgs?dir=sources/combinations";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -42,22 +30,10 @@
       systems = import inputs.systems;
       name = "pa-uimod-smallpause-devshell";
       sources = [
-        # Commits, branches and pull requests.
-        { source = inputs.git-skills; }
-        # Safe shell commands: named deletes, PIDs, no machine-wide changes.
-        { source = inputs.shell-skills; }
-        # Running a prompt as a headless session in a checkout, keeping the
-        # scratchpad tidy, and the cross-repository plan's graph.
-        {
-          source = inputs.coding-agent-skills;
-          skills = [
-            "coding-agent-headless-in-checkout"
-            "coding-agent-plans-as-graph"
-            "coding-agent-scratchpad-scripts"
-          ];
-        }
-        # The README is the mod's only documentation.
-        { source = inputs.writing-skills; }
+        # The browser-extensions-and-game-mods family's combination, the
+        # one skill source. The mod needs nothing the rest of its family
+        # doesn't, so there are no additions.
+        { source = inputs.skillspkgs-combinations.combinations.browser-extensions-and-game-mods; }
       ];
     };
 }
